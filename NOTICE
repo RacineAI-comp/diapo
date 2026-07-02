@@ -1,0 +1,42 @@
+Diapo
+Copyright (c) 2026 racine.ai
+
+This product is licensed under the MIT License (see LICENSE).
+
+It is built on, and interoperates with, open-source components from
+La Suite numérique and the wider ecosystem. Their copyright notices and
+licenses are reproduced with the respective packages; the principal ones are
+listed here for attribution.
+
+--------------------------------------------------------------------------------
+La Suite numérique (https://github.com/suitenumerique)
+Copyright (c) Direction interministérielle du numérique (DINUM) and contributors
+Licensed under the MIT License.
+
+  - Docs / impress: identity, settings and API conventions that this project
+    mirrors and interoperates with.
+  - @gouvfr-lasuite/cunningham-react, @gouvfr-lasuite/cunningham-tokens,
+    @gouvfr-lasuite/ui-kit: design system used by the frontend.
+  - django-lasuite: OIDC login integration used by the backend.
+
+--------------------------------------------------------------------------------
+Fonts
+
+  - Inter, Spectral, Carlito, Gelasio, Arimo, Tinos, Cousine, Anton,
+    Archivo Black, Noto Sans SC: bundled via @fontsource and self-hosted.
+    Licensed under the SIL Open Font License 1.1 or the Apache License 2.0
+    by their respective authors.
+
+--------------------------------------------------------------------------------
+Other notable dependencies
+
+  - Yjs, y-prosemirror, Hocuspocus: MIT License.
+  - TipTap: MIT License.
+  - Next.js, React: MIT License.
+  - Django, Django REST Framework: BSD License.
+  - python-pptx, pptxgenjs, jspdf, recharts: MIT License.
+
+Full dependency license texts are available in the respective packages under
+node_modules/ and the Python environment. Run `npm run build` and a Python
+license report (for example `uv run pip-licenses`) to regenerate the complete
+inventory.

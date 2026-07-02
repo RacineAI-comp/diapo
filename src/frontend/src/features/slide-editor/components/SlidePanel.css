@@ -1,0 +1,160 @@
+/* Thumbnail rail. The base .slide-panel width/border lives in styles.css; these
+   rules style the rail's toolbar + the live mini-previews. */
+.slide-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.slide-panel__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  position: sticky;
+  top: 0;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  z-index: 1;
+}
+/* Rail buttons are cunningham <Button> components (styled by the design system). */
+.slide-panel__sep {
+  width: 1px;
+  align-self: stretch;
+  background: var(--line);
+  margin: 2px 2px;
+}
+
+.slide-panel__list {
+  list-style: none;
+  margin: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.slide-thumb {
+  display: flex;
+}
+.slide-thumb__btn {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 6px;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.slide-thumb__btn:hover {
+  background: #f8fafc;
+}
+.slide-thumb.is-active .slide-thumb__btn {
+  background: #f8fafc;
+}
+/* Ring the slide itself (tight, neutral) instead of a padded blue frame around the button. */
+.slide-thumb.is-active .slide-thumb__frame {
+  box-shadow:
+    0 0 0 2px #64748b,
+    0 1px 4px rgba(2, 6, 23, 0.15);
+}
+/* Slide number as a small badge in the corner of the thumbnail (keeps the frame full-width
+   so it can't overflow the rail). */
+.slide-thumb__num {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 1;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.08);
+}
+
+/* The frame is the scaled-down box; the canvas is the full 960x540 stage we shrink with a
+   CSS transform so object coordinates render 1:1 then scale down (crisp, no math per object). */
+.slide-thumb__frame {
+  position: relative;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(2, 6, 23, 0.15);
+  background: #fff;
+}
+.slide-thumb__canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+}
+.slide-thumb__obj {
+  position: absolute;
+  display: block;
+  outline: 1px solid rgba(15, 23, 42, 0.12);
+}
+/* Mini chart sketch: bars aligned to the bottom of the chart's box. */
+.slide-thumb__chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  width: 100%;
+  height: 100%;
+  padding: 8px 6px 4px;
+  box-sizing: border-box;
+}
+
+.slide-thumb__obj.is-text {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 22px;
+  color: var(--ink);
+  outline: none;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Sections in the rail */
+.slide-panel__row {
+  list-style: none;
+  /* Large-deck perf: skip layout/paint for off-screen thumbnails. The reserved size keeps the
+     scrollbar accurate; the browser renders a row only as it nears the viewport. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 96px;
+}
+.slide-section {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px 2px;
+}
+.slide-section .material-icons { font-size: 16px; color: var(--muted); }
+.slide-section__title {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  padding: 2px 4px;
+  border-radius: var(--radius-xs);
+}
+.slide-section__title:focus { background: var(--bg); color: var(--ink); }
+.slide-section__del {
+  border: none; background: transparent; cursor: pointer; color: var(--muted);
+  display: inline-flex; padding: 2px; border-radius: var(--radius-xs);
+}
+.slide-section__del:hover { background: rgba(15,23,42,.08); }
+.slide-section__del .material-icons { font-size: 14px; }

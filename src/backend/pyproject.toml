@@ -1,0 +1,85 @@
+[project]
+name = "slides"
+version = "0.1.0"
+description = "Diapo, a collaborative presentation editor: Django backend (Presentation API + collab auth)."
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+authors = [{ name = "racine.ai", email = "plemaistre@racine.ai" }]
+dependencies = [
+    "Django==5.2.10",
+    "djangorestframework==3.16.1",
+    "django-cors-headers==4.9.0",
+    "django-configurations==2.5.1",
+    "requests==2.32.5",
+    # Real .pptx parser for native (editable) import, MIT licensed, fully local (no cloud).
+    "python-pptx==1.0.2",
+]
+
+# OIDC / La Suite numérique single sign-on is optional. The backend boots and serves the
+# Presentation API without it (AllowAny local fallback). Enable real auth by installing this extra
+# and setting the OIDC_* environment variables (see settings.py and README.md). django-lasuite
+# pulls mozilla-django-oidc; it stays optional so the local AllowAny mode needs no auth deps.
+[project.optional-dependencies]
+oidc = [
+    "django-lasuite==0.0.27",
+]
+# Postgres driver for the production / docker-compose path (DB_HOST set). Not needed for the
+# zero-dependency SQLite local default, so it stays an optional extra (like oidc). psycopg 3
+# ships a prebuilt binary wheel → no system libpq/build tools required.
+postgres = [
+    "psycopg[binary]==3.2.9",
+]
+# Async task offload (LibreOffice import conversion → worker). Optional; without a broker the web
+# process renders inline. Redis is the broker/result backend (the same one collab scaling uses).
+celery = [
+    "celery[redis]==5.4.0",
+]
+# Observability: self-hosted error tracking (Sentry) + Prometheus metrics. Optional & env-gated;
+# the backend boots without them. Sentry/PostHog must be SELF-HOSTED in-region (sovereignty).
+observability = [
+    "sentry-sdk==2.20.0",
+    "django-prometheus==2.3.1",
+]
+# Dev/test toolchain (ruff + pytest-django + factory_boy). Includes celery so the full test suite
+# runs from a single `.[dev]` install (the .pptx import task module imports celery even in the
+# eager, broker-less mode used by tests).
+dev = [
+    "ruff==0.9.6",
+    "pytest==8.3.4",
+    "pytest-django==4.9.0",
+    "factory-boy==3.3.1",
+    "celery[redis]==5.4.0",
+]
+
+[tool.setuptools]
+packages = ["slides", "core"]
+
+# --- Tooling (mirrors upstream Docs' ruff/pytest conventions) -------------------------------
+[tool.ruff]
+exclude = [".git", ".venv", "build", "venv", "__pycache__", "migrations"]
+line-length = 88
+
+[tool.ruff.lint]
+# Same select set as upstream Docs; ignore the same two, plus B904 (raise-from) which our
+# fail-loud settings guards intentionally don't chain.
+ignore = ["DJ001", "PLR2004", "B904"]
+select = ["B", "BLE", "C4", "DJ", "I", "PLC", "PLE", "PLR", "PLW", "RUF100", "S", "SLF", "T20"]
+
+[tool.ruff.lint.isort]
+section-order = ["future", "standard-library", "django", "third-party", "first-party", "local-folder"]
+sections = { django = ["django"] }
+
+[tool.ruff.lint.per-file-ignores]
+# Tests may use asserts/private access; the .pptx parser + its verify script are large
+# inspection modules exempt from strict security/complexity rules; CLI scripts print.
+"**/tests.py" = ["S", "SLF"]
+"core/pptx_import.py" = ["S", "PLR", "PLW", "BLE", "B", "C4", "SLF"]
+"core/verify_pptx_import.py" = ["T20", "SLF", "PLR", "S"]
+"core/render.py" = ["S603", "S607"]  # subprocess with fixed arg lists, controlled input
+"scripts/*" = ["T20", "S"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "slides.settings"
+python_files = ["test_*.py", "tests.py"]
+addopts = ["-v", "--import-mode=importlib"]

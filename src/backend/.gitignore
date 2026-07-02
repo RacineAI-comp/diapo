@@ -1,0 +1,17 @@
+# Local SQLite database (Django dev), never committed.
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+
+# Virtualenv
+.venv/
+venv/
+
+# Python caches
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# Uploaded media (local dev / object store in prod)
+media/

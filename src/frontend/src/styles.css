@@ -1,0 +1,434 @@
+/* App colors are aliased to La Suite white-label tokens (cunningham-tokens default theme), with
+   hex fallbacks so the app still renders if a token is ever absent. This makes the whole UI use
+   the design system's palette without touching every rule. */
+:root {
+  --bg: var(--c--globals--colors--gray-050, #f0f1f2);
+  --panel: var(--c--contextuals--background--surface--primary, #ffffff);
+  --ink: var(--c--contextuals--content--semantic--neutral--primary, #0f172a);
+  --muted: var(--c--contextuals--content--semantic--neutral--secondary, #64748b);
+  --accent: var(--c--contextuals--background--semantic--brand--primary, #1167d4);
+  --line: var(--c--contextuals--border--surface--primary, #e1e2e5);
+
+  /* App-token layer. cunningham-tokens ships colors but NO radii/elevation/focus/z/motion -
+     define them once here so every component reads the same scale (no magic numbers). */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+
+  --elev-1: 0 1px 2px rgba(2, 6, 23, 0.06), 0 1px 3px rgba(2, 6, 23, 0.08);
+  --elev-2: 0 4px 12px rgba(2, 6, 23, 0.10), 0 1px 3px rgba(2, 6, 23, 0.06);
+  --elev-3: 0 12px 32px rgba(2, 6, 23, 0.18), 0 2px 8px rgba(2, 6, 23, 0.10);
+
+  --focus-ring: 0 0 0 2px var(--panel), 0 0 0 4px var(--accent);
+  --focus-color: var(--accent);
+
+  /* z-index scale, keep overlays from fighting each other */
+  --z-canvas: 1;
+  --z-moveable: 40;
+  --z-cursor: 50;
+  --z-badge: 55;
+  --z-floating: 60;
+  --z-statusbar: 70;
+  --z-drawer: 80;
+  --z-popover: 90;
+  --z-ribbon-menu: 95;
+  --z-modal: 100;
+  --z-palette: 110;
+
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 320ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+
+  color-scheme: light;
+}
+
+/* Global focus-visible ring (RGAA 3.x): keyboard focus is always visible. We never strip
+   outlines without a replacement, components that set outline:none must pair it with this. */
+:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+/* Don't show the ring for mouse clicks that land focus (only keyboard), :focus-visible already
+   handles this, but belt-and-suspenders for inputs the browser always marks visible. */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: var(--ink); background: var(--bg);
+}
+/* 100dvh (not height:100%): CunninghamProvider adds a wrapper div that breaks the height:100%
+   chain, leaving a gap at the bottom. Tie the app to the viewport directly. */
+.app { display: flex; flex-direction: column; height: 100dvh; }
+
+/* Dark mode, override the app color aliases. The slide canvas itself keeps its own (white/dark)
+   background from the deck; only the editor chrome goes dark. */
+.app.dark {
+  --bg: #0b1220;
+  --panel: #131a2b;
+  --ink: #e2e8f0;
+  --muted: #94a3b8;
+  --line: #283449;
+  color-scheme: dark;
+}
+.app.dark .stage { background: #0b1220; }
+
+.topbar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line);
+}
+.topbar .muted { color: var(--muted); }
+.topbar .brand-link { text-decoration: none; color: var(--ink); }
+.topbar .brand-link:hover { color: var(--accent); }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.topbar .me { font-weight: 600; white-space: nowrap; }
+.status { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: #fee2e2; color: #991b1b; }
+.status.connected { background: #dcfce7; color: #166534; }
+.status.connecting { background: #fef9c3; color: #854d0e; }
+
+/* Buttons in the chrome are cunningham <Button> components, no element-level button styling
+   here (it would override the design system). Only layout below. */
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
+
+/* min-width:0 lets this flex child shrink to the available space instead of growing to the
+   slide-scaler's content width, without it the canvas pushes the inspector off-screen (a
+   horizontal page scroll) AND inflates the fit-scale measurement the resizer relies on. */
+.stage { flex: 1; min-width: 0; display: grid; place-items: center; padding: 28px; overflow: auto; min-height: 0; }
+.slide-scaler { position: relative; }
+.slide {
+  position: relative; background: #fff; border-radius: 6px;
+  box-shadow: 0 10px 40px rgba(2, 6, 23, .15); overflow: hidden;
+}
+/* Grid overlay (View → Grille). */
+.slide-grid {
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background-image:
+    linear-gradient(to right, rgba(15,23,42,.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15,23,42,.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+/* Slide footer (number / date / text). Ink follows the custom theme text color when set. */
+.slide-footer {
+  position: absolute; left: 24px; right: 24px; bottom: 10px; z-index: 2;
+  text-align: center; font-size: 12px; color: var(--theme-ink-muted, rgba(15,23,42,.5));
+  pointer-events: none; font-variant-numeric: tabular-nums;
+}
+/* Master layers (deck theme editor): deck-wide background image drawn under the objects (DOM
+   order, no z-index) and a deck-wide logo drawn above them like the footer. Both are pure master
+   chrome: never selectable, never movable. */
+.slide-master-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-size: cover; background-position: center;
+}
+.slide-master-logo {
+  position: absolute; z-index: 2; pointer-events: none;
+  width: auto; max-width: 40%; object-fit: contain; user-select: none;
+}
+/* Read-only gate for inspector blocks whose inner widgets lack a disabled prop (ColorPopover). */
+.ins-ro { pointer-events: none; opacity: .55; }
+
+/* On-canvas size/position readout during a drag/resize/rotate gesture. */
+.dim-badge {
+  position: absolute;
+  z-index: 55;
+  pointer-events: none;
+  background: rgba(15, 23, 42, 0.85);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 6px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Empty-slide hint. */
+.slide-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  color: rgba(15, 23, 42, .38);
+  pointer-events: none;
+  padding: 0 48px;
+}
+.slide-empty .material-icons { font-size: 56px; }
+.slide-empty p { margin: 0; font-size: 18px; max-width: 440px; }
+
+/* Marquee (drag-to-select) rectangle. */
+.slide-marquee {
+  position: absolute;
+  z-index: 45;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid var(--accent);
+  pointer-events: none;
+}
+
+.obj { user-select: none; cursor: grab; }
+.obj.text {
+  display: flex; align-items: center; padding: 8px 12px; background: transparent;
+  font-size: 22px; color: var(--ink);
+  /* overflow visible so the floating format toolbar (above the box) isn't clipped; the text itself
+     is clipped/scrolled by .textbox-content (height:100%; overflow:auto). */
+  overflow: visible;
+}
+
+.cursor { position: absolute; pointer-events: none; transform: translate(-2px, -2px); z-index: 50; }
+.cursor .dot { display: block; width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 0 2px #fff; }
+.cursor .label {
+  position: absolute; left: 12px; top: -2px; white-space: nowrap;
+  color: #fff; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 6px;
+}
+
+/* presence now lives in the header as an avatar stack, see components/Presence.css */
+
+/* v0.1 layout: left slide rail | stage | right properties panel */
+.workspace { flex: 1; display: flex; min-height: 0; min-width: 0; overflow: hidden; }
+.slide-panel { width: 196px; flex: 0 0 196px; background: var(--panel); border-right: 1px solid var(--line); overflow-y: auto; overflow-x: hidden; }
+.properties-panel { width: 248px; flex: 0 0 248px; background: var(--panel); border-left: 1px solid var(--line); overflow: auto; }
+
+.toolbar .sep { width: 1px; align-self: stretch; background: var(--line); margin: 0 4px; }
+.toolbar .spacer { margin-left: auto; }
+
+/* Legacy text-box shell. color:inherit (NOT --ink) so the per-object box text colour set in
+   SlideObjectView reaches the editor content, and dark mode never flips slide text. */
+.textbox { width: 100%; height: 100%; display: flex; align-items: center; padding: 0 12px; font-size: 22px; color: inherit; overflow: visible; }
+
+/* Moveable snap/alignment guidelines. Tint them with the accent so they read as
+   intentional alignment hints rather than the library's default magenta. */
+.moveable-line.moveable-gap { background: var(--accent) !important; }
+.moveable-line.moveable-bold { background: var(--accent) !important; }
+.moveable-line.moveable-dashed { border-top-color: var(--accent) !important; }
+
+/* Selection frame + resize handles: neutral gray, not the library blue. */
+.moveable-control-box { --moveable-color: #64748b; }
+.moveable-control { background: #64748b !important; border-color: #fff !important; }
+.moveable-line:not(.moveable-gap):not(.moveable-bold):not(.moveable-dashed) {
+  background: #64748b !important;
+}
+/* The center/origin crosshair adds nothing for slide objects. */
+.moveable-origin { display: none !important; }
+/* Smaller resize handles; the rotation grip (no .moveable-direction) keeps its size. */
+.moveable-control.moveable-direction {
+  width: 9px !important;
+  height: 9px !important;
+  margin-top: -4.5px !important;
+  margin-left: -4.5px !important;
+}
+
+/* Language switcher (suite home + dashboard headers). A plain, accessible <select>. */
+.lang-picker {
+  height: 28px; padding: 0 6px; font: inherit; font-size: 13px; color: var(--ink, #0f172a);
+  background: transparent; border: 1px solid var(--line, #e2e8f0); border-radius: 6px; cursor: pointer;
+}
+.lang-picker:focus-visible { outline: 2px solid var(--accent, #1167d4); outline-offset: 1px; }
+
+/* Diagram generator dialog (overlays/DiagramDialog.tsx) */
+.diag-types { display: flex; gap: 8px; margin-bottom: 12px; }
+.diag-type {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 8px 4px; font: inherit; font-size: 12px; cursor: pointer;
+  color: var(--muted); background: var(--panel);
+  border: 1px solid var(--line); border-radius: var(--radius-sm);
+}
+.diag-type:hover { border-color: var(--accent); color: var(--ink); }
+.diag-type.is-active { border-color: var(--accent); color: var(--accent); background: rgba(17, 103, 212, 0.06); }
+.diag-label { display: block; margin-bottom: 6px; font-size: 12px; color: var(--muted); }
+.diag-src {
+  width: 100%; resize: vertical; box-sizing: border-box; padding: 8px 10px;
+  font: inherit; font-size: 13px; line-height: 1.5; color: var(--ink); tab-size: 2;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
+}
+.diag-src:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.diag-meta { margin: 8px 0 0; font-size: 12px; color: var(--muted); }
+
+/* Presenter build effects, emphasis + exit kinds. The entrance set and the shared .present-anim
+   base (fill-mode: both, easing) live in Presenter.css; these classes only pick keyframes, the
+   Presenter sets duration/delay/transform-origin inline per anim. Emphasis effects return to the
+   identity state; exit effects end hidden and fill-mode holds that until the object unmounts.
+   prefers-reduced-motion (cunningham-style.css) collapses them all to instant. */
+.present-anim-pulse { animation-name: pa-pulse; }
+.present-anim-tint { animation-name: pa-tint; }
+.present-anim-shake { animation-name: pa-shake; }
+.present-anim-grow { animation-name: pa-grow; }
+.present-anim-fade-out { animation-name: pa-fade-out; }
+.present-anim-slide-down { animation-name: pa-slide-down; }
+.present-anim-zoom-out { animation-name: pa-zoom-out; }
+.present-anim-wipe-out { animation-name: pa-fade-out; }
+@keyframes pa-pulse { 50% { transform: scale(1.12); } }
+@keyframes pa-tint { 50% { filter: brightness(1.5) saturate(1.8); } }
+@keyframes pa-shake {
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(4px); }
+}
+@keyframes pa-grow {
+  40% { transform: scale(1.3); }
+  70% { transform: scale(0.95); }
+}
+@keyframes pa-fade-out { to { opacity: 0; } }
+@keyframes pa-slide-down { to { opacity: 0; transform: translateY(28px); } }
+@keyframes pa-zoom-out { to { opacity: 0; transform: scale(0.7); } }
+
+/* ===================== Responsive layout ===================== */
+/* Three tiers: desktop (default), compact (<=1100px: inspector becomes an off-canvas drawer),
+   phone (<=768px: the thumbnail rail becomes a bottom filmstrip and the chrome condenses).
+   Selectors are prefixed with .app/.workspace to win over the co-located component CSS
+   regardless of import order. */
+
+.app .drawer-backdrop { display: none; }
+.app .statusbar .sb-drawer-toggle { display: none; }
+
+@media (max-width: 1100px) {
+  /* Inspector / comments panel: off-canvas drawer over the canvas. */
+  .app .statusbar .sb-drawer-toggle { display: inline-flex; }
+  .app .workspace .inspector,
+  .app .workspace .comments {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 240;
+    width: min(320px, 88vw);
+    background: var(--panel);
+    border-left: 1px solid var(--line);
+    box-shadow: -12px 0 32px rgba(2, 6, 23, 0.25);
+    transform: translateX(102%);
+    /* visibility keeps the closed drawer out of the tab order and off screen readers */
+    visibility: hidden;
+    transition: transform 0.2s ease, visibility 0.2s;
+  }
+  .app.inspector-open .workspace .inspector,
+  .app.inspector-open .workspace .comments { transform: none; visibility: visible; }
+  .app.inspector-open .drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 230;
+    background: rgba(2, 6, 23, 0.35);
+  }
+  /* Ribbon: horizontal scroll instead of clipping tabs/groups. */
+  .app .ribbon-tabs { overflow-x: auto; scrollbar-width: thin; }
+  .app .ribbon-tab { white-space: nowrap; flex: 0 0 auto; }
+  .app .ribbon-body { overflow-x: auto; scrollbar-width: thin; }
+  .app .stage { padding: 16px; }
+}
+
+@media (max-width: 768px) {
+  /* Column layout: canvas on top, thumbnail filmstrip below it. */
+  .app .workspace { flex-direction: column; }
+  .app .workspace > .stage { order: 1; padding: 10px; }
+  .app .workspace > .slide-panel {
+    order: 2;
+    width: 100%;
+    height: 136px;
+    flex: 0 0 auto;
+    flex-direction: row;
+    border-right: none;
+    border-top: 1px solid var(--line);
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  /* Rail toolbar: a wrapping column block on the left edge of the filmstrip. */
+  .app .slide-panel__toolbar {
+    position: sticky;
+    left: 0;
+    flex: 0 0 auto;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    width: auto;
+    max-height: 100%;
+    border-bottom: none;
+    border-right: 1px solid var(--line);
+  }
+  .app .slide-panel__sep { display: none; }
+  .app .slide-panel__list { flex-direction: row; align-items: center; gap: 8px; padding: 8px; }
+  .app .slide-thumb { flex: 0 0 auto; }
+  .app .slide-thumb__btn { width: auto; }
+  .app .workspace > .outline {
+    order: 2;
+    width: 100%;
+    flex: 0 0 auto;
+    max-height: 42dvh;
+    border-right: none;
+    border-top: 1px solid var(--line);
+    overflow-y: auto;
+  }
+  /* Condensed top bar: keep launcher, title, save state icon, share/present/menus. */
+  .app .topbar { padding: 8px 10px; gap: 8px; }
+  .app .topbar .brand-link { display: none; }
+  .app .topbar .presence-stack { display: none; }
+  .app .topbar-title { flex: 1; min-width: 60px; }
+  .app .topbar-save { font-size: 0; gap: 0; }
+  .app .topbar-right { gap: 6px; }
+  /* Icon-only action buttons: collapse the label, keep the icon glyph size. */
+  .app .topbar-btn { font-size: 0; gap: 0; padding: 8px; }
+  .app .topbar-btn .material-icons,
+  .app .topbar-btn .material-symbols-outlined { font-size: 20px; }
+  .app .statusbar { padding: 4px 8px; }
+  .app .statusbar .sb-item { white-space: nowrap; }
+}
+
+/* Comfortable touch targets on touch devices and phone layouts (WCAG 2.5.8). */
+@media (max-width: 768px), (pointer: coarse) {
+  .app .slide-panel .c__button,
+  .app .ribbon .c__button,
+  .app .topbar .c__button {
+    min-width: 36px;
+    min-height: 36px;
+  }
+  .app .statusbar .sb-toggle,
+  .app .statusbar .sb-zoom-btn {
+    min-width: 34px;
+    min-height: 30px;
+  }
+  .app .cp-trigger { min-height: 32px; }
+  .app .inspector-tab { padding: 10px 4px; }
+  .app .ribbon-tab { padding: 10px 12px; }
+}
+
+/* Ribbon collapse chevron (sits at the right end of the tab strip). */
+.app .ribbon-collapse {
+  appearance: none;
+  border: none;
+  background: transparent;
+  margin-left: auto;
+  padding: 6px 10px;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+}
+.app .ribbon-collapse:hover { color: var(--ink); background: rgba(15, 23, 42, 0.04); }
+
+/* The slide-rail toolbar wraps instead of clipping when the rail is narrow. */
+.app .slide-panel__toolbar { flex-wrap: wrap; }
+
+/* Compact status bar on narrow screens: keep position + zoom, drop the object count. */
+@media (max-width: 640px) {
+  .app .statusbar .sb-left .sb-sep,
+  .app .statusbar .sb-left .sb-item:nth-child(3) { display: none; }
+  .app .statusbar { gap: 4px; }
+  .app .statusbar .sb-zoom { min-width: 0; }
+}
+
+/* The design system's toast container spans the bottom of the screen even when empty and
+   swallows pointer events aimed at the UI beneath it (statusbar, filmstrip). Let events pass
+   through the container; actual toasts stay clickable. */
+.c__toast__container { pointer-events: none; }
+.c__toast__container > * { pointer-events: auto; }

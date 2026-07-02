@@ -1,0 +1,78 @@
+.tfc {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.tfc-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 4px;
+  border-right: 1px solid var(--line);
+}
+.tfc-group:last-child {
+  border-right: none;
+}
+
+.tfc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 4px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.tfc-btn:hover {
+  background: rgba(15, 23, 42, 0.06);
+}
+.tfc-btn.is-active {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+.tfc-btn .material-icons {
+  font-size: 19px;
+}
+.tfc-text {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.tfc-select {
+  height: 28px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  padding: 0 4px;
+  cursor: pointer;
+}
+.tfc-font {
+  min-width: 104px;
+}
+.tfc-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+.tfc-sizesel {
+  width: 54px;
+  text-align: center;
+}
+
+/* Dense = floating toolbar: tighter, no group borders. */
+.tfc-dense .tfc-group {
+  border-right: none;
+  padding: 0 2px;
+}
+.tfc-dense .tfc-btn {
+  min-width: 26px;
+  height: 26px;
+}

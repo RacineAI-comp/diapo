@@ -1,0 +1,49 @@
+{
+  "_comment": "Development realm for local SSO, imported by the compose `keycloak` service (profile: full). For a real deployment, regenerate with strong secrets and your own realm over TLS.",
+  "realm": "slides",
+  "enabled": true,
+  "displayName": "Diapo",
+  "displayNameHtml": "<strong>Diapo</strong>",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": true,
+  "rememberMe": true,
+  "loginWithEmailAllowed": true,
+  "sslRequired": "external",
+  "clients": [
+    {
+      "clientId": "slides-backend",
+      "name": "Diapo backend (OIDC relying party)",
+      "description": "Django backend confidential client, authorization-code flow.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "dev-slides-backend-secret-change-me",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:8000/*",
+        "http://localhost:3000/*",
+        "http://keycloak:8080/*"
+      ],
+      "webOrigins": ["http://localhost:8000", "http://localhost:3000"],
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:3000/*##http://localhost:8000/*"
+      },
+      "defaultClientScopes": ["openid", "email", "profile", "roles"]
+    }
+  ],
+  "users": [
+    {
+      "username": "demo",
+      "enabled": true,
+      "emailVerified": true,
+      "email": "demo@slides.local",
+      "firstName": "Démo",
+      "lastName": "Utilisateur",
+      "credentials": [{ "type": "password", "value": "demo", "temporary": false }],
+      "realmRoles": ["default-roles-slides"]
+    }
+  ]
+}

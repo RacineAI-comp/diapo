@@ -1,0 +1,145 @@
+.dash {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  background: var(--bg);
+}
+
+.dash__main {
+  flex: 1;
+  overflow: auto;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+
+.dash__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.dash__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.dash__muted {
+  color: var(--muted);
+}
+.dash__error {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+.dash__error p {
+  margin: 0 0 8px;
+}
+
+.dash__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 64px 24px;
+  color: var(--muted);
+  text-align: center;
+}
+.dash__empty .material-icons {
+  font-size: 48px;
+  color: var(--accent);
+}
+
+.dash__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.deck-card {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.12s ease, border-color 0.12s ease;
+}
+.deck-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.1);
+}
+
+.deck-card__open {
+  display: block;
+  width: 100%;
+  padding: 0 0 12px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+.deck-card__thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  background: var(--c--globals--colors--gray-050, #f0f1f2);
+  border-bottom: 1px solid var(--line);
+}
+.deck-card__thumb .material-icons {
+  font-size: 40px;
+  color: var(--c--contextuals--content--semantic--neutral--secondary, #94a3b8);
+}
+.deck-card__title {
+  display: block;
+  padding: 12px 12px 2px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.deck-card__date {
+  display: block;
+  padding: 0 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.deck-card__actions {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  transition: opacity 0.12s ease;
+}
+.deck-card:hover .deck-card__actions,
+.deck-card:focus-within .deck-card__actions {
+  opacity: 1;
+}
+
+/* Narrow screens: drop the version tag and let the header wrap instead of overflowing. */
+@media (max-width: 560px) {
+  .dash .topbar { flex-wrap: wrap; gap: 6px 8px; padding: 8px 10px; }
+  .dash .topbar > .muted { display: none; }
+  .dash__head { flex-wrap: wrap; gap: 8px; }
+}
+
+/* Comfortable touch targets for the card actions (WCAG 2.5.8). */
+@media (max-width: 768px), (pointer: coarse) {
+  .dash .c__button {
+    min-width: 36px;
+    min-height: 36px;
+  }
+}

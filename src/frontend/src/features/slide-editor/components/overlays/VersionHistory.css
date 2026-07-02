@@ -1,0 +1,77 @@
+.vh-capture {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.vh-capture input {
+  flex: 1;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 13px;
+}
+.modal-btn.primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.modal-btn.primary .material-icons {
+  font-size: 16px;
+}
+.vh-empty {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.vh-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.vh-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+.vh-meta {
+  display: flex;
+  flex-direction: column;
+}
+.vh-meta strong {
+  font-size: 13px;
+}
+.vh-meta span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.vh-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.vh-del {
+  display: inline-flex;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 6px;
+  border-radius: var(--radius-sm);
+}
+.vh-del:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.vh-del .material-icons {
+  font-size: 18px;
+}

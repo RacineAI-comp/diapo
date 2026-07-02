@@ -1,0 +1,85 @@
+# publiccode.yml — public software description, per https://yml.publiccode.tools/
+# Lets public-sector catalogues (code.gouv.fr and friends) index this repository.
+publiccodeYmlVersion: "0.4"
+
+name: Diapo
+url: "https://github.com/RacineAI-comp/diapo"
+softwareVersion: "0.1.0"
+releaseDate: "2026-07-06"
+platforms:
+  - web
+
+categories:
+  - office
+  - collaboration
+
+developmentStatus: beta
+softwareType: "standalone/web"
+
+description:
+  fr:
+    shortDescription: >-
+      Éditeur de présentations collaboratif : diaporamas dans le navigateur,
+      édition à plusieurs en temps réel, import et export PowerPoint (.pptx).
+    longDescription: >-
+      Diapo est un éditeur de présentations collaboratif, auto-hébergeable et
+      open source. Il permet de créer, modifier et présenter des diaporamas
+      directement dans le navigateur, à plusieurs et en temps réel (curseurs et
+      présence, fusion sans conflit via CRDT). Il importe et exporte les
+      fichiers PowerPoint (.pptx) en conservant la mise en forme, exporte en
+      PDF, et propose thèmes, transitions, animations, graphiques, tableaux,
+      diagrammes, notes de présentation, historique de versions et mode
+      présentateur plein écran. Diapo suit les conventions de La Suite
+      numérique (système de design cunningham, intégration OIDC django-lasuite)
+      afin de partager une authentification unique avec les autres
+      applications d'une suite. Il est construit avec Next.js, Django REST
+      Framework et Yjs, et se déploie avec PostgreSQL et Redis.
+    features:
+      - Édition collaborative en temps réel (curseurs, présence, CRDT)
+      - Import et export PowerPoint (.pptx), export PDF
+      - Canevas libre — texte riche, formes, images, vidéo, audio, tableaux, graphiques
+      - Thèmes, transitions, animations et mode présentateur plein écran
+      - Historique de versions avec points de restauration nommés
+      - Authentification unique OIDC optionnelle (Keycloak ou tout fournisseur OpenID Connect)
+      - Fonctions d'accessibilité alignées sur le RGAA 4.1
+  en:
+    shortDescription: >-
+      Collaborative presentation editor: slide decks in the browser, real-time
+      multi-user editing, PowerPoint (.pptx) import and export.
+    longDescription: >-
+      Diapo is a self-hostable, open-source collaborative presentation editor.
+      It lets teams build, edit and present slide decks directly in the
+      browser, together and in real time (cursors and presence, conflict-free
+      merging via CRDT). It imports and exports PowerPoint (.pptx) files while
+      preserving formatting, exports to PDF, and offers themes, transitions,
+      animations, charts, tables, diagrams, speaker notes, version history and
+      a full-screen presenter mode. Diapo follows the conventions of La Suite
+      numérique (the cunningham design system and the django-lasuite OIDC
+      integration) so it can share single sign-on with the other applications
+      of a suite. It is built with Next.js, Django REST Framework and Yjs, and
+      deploys with PostgreSQL and Redis.
+    features:
+      - Real-time collaborative editing (cursors, presence, CRDT)
+      - PowerPoint (.pptx) import and export, PDF export
+      - Free-form canvas — rich text, shapes, images, video, audio, tables, charts
+      - Themes, transitions, animations and a full-screen presenter mode
+      - Version history with named restore points
+      - Optional OIDC single sign-on (Keycloak or any OpenID Connect provider)
+      - Accessibility features aligned with RGAA 4.1
+
+legal:
+  license: MIT
+  mainCopyrightOwner: racine.ai
+  repoOwner: racine.ai
+
+maintenance:
+  type: internal
+  contacts:
+    - name: racine.ai
+      email: plemaistre@racine.ai
+
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - fr
+    - en

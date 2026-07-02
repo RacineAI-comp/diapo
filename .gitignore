@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+.venv/
+*.egg-info/
+
+# Builds and caches
+.next/
+dist/
+out/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+tsconfig.tsbuildinfo
+next-env.d.ts
+
+# Local data
+*.sqlite3
+media/uploads/
+media/debug-imports/
+*.log
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

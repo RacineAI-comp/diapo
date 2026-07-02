@@ -1,0 +1,5 @@
+# Collab persistence, Y.Doc SQLite store (created at runtime). Never committed.
+data/
+*.sqlite
+*.sqlite-journal
+*.sqlite3

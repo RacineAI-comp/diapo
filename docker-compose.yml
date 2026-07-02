@@ -1,0 +1,168 @@
+# Development stack for Diapo.
+#
+#   docker compose up
+#
+# Brings up the frontend (Next.js), the collaboration server (Hocuspocus), the backend (Django),
+# PostgreSQL and Redis. The default stack runs without authentication, so any visitor can edit,
+# which is convenient for local development. Open http://localhost:3000.
+#
+# For single sign-on (Keycloak), use the `full` profile with an env file:
+#
+#   cp .env.example .env
+#   docker compose --profile full --env-file .env up
+#
+# The backend uses SQLite with no external services when DB_HOST is unset; here DB_HOST points at
+# PostgreSQL, so the stack is production-like.
+name: slides
+
+services:
+  collab:
+    image: node:22-bookworm-slim
+    working_dir: /app
+    command: sh -c "npm ci --no-audit --no-fund && node servers/y-provider/server.mjs"
+    environment:
+      COLLAB_PORT: "1234"
+      # Persist Y.Docs through the backend (source of truth) and enforce abilities on each
+      # handshake. Y_PROVIDER_API_KEY must match the backend's.
+      COLLAB_BACKEND_URL: http://backend:8000
+      Y_PROVIDER_API_KEY: dev-collab-secret-change-me
+      # Redis pub/sub so multiple collab replicas share awareness and document updates.
+      REDIS_URL: redis://redis:6379/0
+      # Only these origins may open the collab websocket (set to the public origin in production).
+      COLLAB_WS_ALLOWED_ORIGINS: ${COLLAB_WS_ALLOWED_ORIGINS:-http://localhost:3000}
+    volumes:
+      - ./src/frontend:/app
+      - collab_node_modules:/app/node_modules
+    ports:
+      - "1234:1234"
+    depends_on:
+      - backend
+      - redis
+
+  backend:
+    image: python:3.13-slim
+    working_dir: /app
+    # `${OIDC_EXTRA}` adds the `oidc` extra only when an auth env file is passed (profile: full).
+    command: sh -c "pip install -e '.[postgres,celery]${OIDC_EXTRA:-}' && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      DJANGO_CONFIGURATION: Development
+      DB_HOST: db
+      DB_NAME: slides
+      DB_USER: slides
+      DB_PASSWORD: slides
+      DB_PORT: "5432"
+      # Shared secret for the collab server's server-to-server calls (abilities + persistence).
+      Y_PROVIDER_API_KEY: dev-collab-secret-change-me
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      # OIDC, empty by default (AllowAny). Populated from the env file under `--profile full`.
+      OIDC_OP_JWKS_ENDPOINT: ${OIDC_OP_JWKS_ENDPOINT:-}
+      OIDC_OP_AUTHORIZATION_ENDPOINT: ${OIDC_OP_AUTHORIZATION_ENDPOINT:-}
+      OIDC_OP_TOKEN_ENDPOINT: ${OIDC_OP_TOKEN_ENDPOINT:-}
+      OIDC_OP_USER_ENDPOINT: ${OIDC_OP_USER_ENDPOINT:-}
+      OIDC_OP_LOGOUT_ENDPOINT: ${OIDC_OP_LOGOUT_ENDPOINT:-}
+      OIDC_RP_CLIENT_ID: ${OIDC_RP_CLIENT_ID:-}
+      OIDC_RP_CLIENT_SECRET: ${OIDC_RP_CLIENT_SECRET:-}
+      OIDC_RP_SCOPES: ${OIDC_RP_SCOPES:-openid email profile}
+      OIDC_REDIRECT_ALLOWED_HOSTS: ${OIDC_REDIRECT_ALLOWED_HOSTS:-}
+      LOGIN_REDIRECT_URL: ${LOGIN_REDIRECT_URL:-http://localhost:3000/}
+      LOGOUT_REDIRECT_URL: ${LOGOUT_REDIRECT_URL:-http://localhost:3000/}
+    volumes:
+      - ./src/backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    image: python:3.13-slim
+    working_dir: /app
+    # The worker (not the web tier) runs LibreOffice and poppler for .pptx conversion. Production
+    # bakes these into the image; here they are apt-installed on first boot (slow first start).
+    command: >
+      sh -c "apt-get update && apt-get install -y --no-install-recommends libreoffice poppler-utils
+      && pip install -e '.[postgres,celery]' && celery -A slides worker -l info"
+    environment:
+      DB_HOST: db
+      DB_NAME: slides
+      DB_USER: slides
+      DB_PASSWORD: slides
+      DB_PORT: "5432"
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+    volumes:
+      - ./src/backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    image: node:22-bookworm-slim
+    working_dir: /app
+    command: sh -c "npm ci --no-audit --no-fund && npm run dev -- -p 3000 -H 0.0.0.0"
+    environment:
+      # The Next.js dev server rewrites /api to the backend and connects to collab directly.
+      API_PROXY_TARGET: http://backend:8000
+      NEXT_PUBLIC_COLLAB_URL: ws://localhost:1234
+    volumes:
+      - ./src/frontend:/app
+      - frontend_node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+      - collab
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: slides
+      POSTGRES_USER: slides
+      POSTGRES_PASSWORD: slides
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U slides -d slides"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    ports:
+      - "6379:6379"
+
+  # --- Optional services (profile: full) -------------------------------------------------
+  keycloak:
+    profiles: ["full"]
+    image: quay.io/keycloak/keycloak:26.0
+    # --import-realm loads config/keycloak/*.json on first boot. KC_HOSTNAME=keycloak keeps the
+    # issuer stable so browser and backend agree (add `127.0.0.1 keycloak` to /etc/hosts).
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: keycloak
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+    volumes:
+      - ./config/keycloak:/opt/keycloak/data/import:ro
+    ports:
+      - "8080:8080"
+
+volumes:
+  collab_node_modules:
+  frontend_node_modules:
+  db_data:

@@ -1,0 +1,35 @@
+.share {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 380px;
+}
+.share__label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--c--contextuals--content--semantic--neutral--secondary, #64748b);
+}
+.share__row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.share__row > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+.share__access {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--c--contextuals--border--surface--primary, #e1e2e5);
+}
+.share__note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--c--contextuals--content--semantic--neutral--secondary, #64748b);
+}

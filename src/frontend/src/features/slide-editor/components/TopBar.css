@@ -1,0 +1,121 @@
+.topbar-title {
+  flex: 0 1 280px;
+  min-width: 80px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+}
+.topbar-title:hover {
+  border-color: var(--line);
+}
+.topbar-title:focus {
+  border-color: var(--accent);
+  background: var(--panel);
+}
+
+.topbar-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.topbar-save.is-saved {
+  color: #15803d;
+}
+.topbar-save.is-offline {
+  color: #b45309; /* amber, edits stay local until the connection is restored */
+}
+.topbar-save .material-icons {
+  font-size: 16px;
+}
+
+.topbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.topbar-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+.topbar-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.topbar-btn .material-icons {
+  font-size: 18px;
+}
+.topbar-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.topbar-primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+/* Read-only session banner (role=status), a persistent strip between the bar and the ribbon. */
+.readonly-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: #fef3c7;
+  border-bottom: 1px solid #fcd34d;
+  color: #78350f;
+  font-size: 13px;
+}
+.readonly-banner .material-icons {
+  font-size: 18px;
+}
+.app.dark .readonly-banner {
+  background: #3b2f14;
+  border-bottom-color: #7c5e10;
+  color: #fde68a;
+}
+
+/* Export failure alert (role=alert), dismissible. */
+.topbar-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: #fee2e2;
+  border-bottom: 1px solid #fca5a5;
+  color: #7f1d1d;
+  font-size: 13px;
+}
+.topbar-alert .material-icons {
+  font-size: 18px;
+}
+.topbar-alert-close {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  padding: 2px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.topbar-alert-close:hover {
+  background: rgba(0, 0, 0, 0.08);
+}

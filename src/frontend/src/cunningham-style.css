@@ -1,0 +1,103 @@
+/* La Suite design system (cunningham), using the default (non-DSFR) theme tokens. Order
+   matters: ui-kit base styles first, then the token overrides so the :root token values win.
+   Material Icons are required by ui-kit/cunningham components. */
+@import '@gouvfr-lasuite/ui-kit/style';
+@import '@gouvfr-lasuite/cunningham-tokens/default-tokens';
+@import '@fontsource/material-icons';
+@import '@fontsource/material-icons-outlined';
+/* Self-hosted open-license fonts, bundled and served by the app (no third-party font CDN). */
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/spectral/400.css';
+@import '@fontsource/spectral/700.css';
+/* Metric-compatible OFL/Apache clones of the Microsoft fonts that .pptx decks request.
+   Self-hosted (bundled from node_modules, no CDN). The same families are installed
+   on the host so LibreOffice (the fidelity ground truth) and our Chromium render wrap text
+   identically. fonts.ts fontStack() maps Calibri->Carlito, Georgia->Gelasio, Arial->Arimo,
+   Times New Roman->Tinos, Courier New->Cousine. Regular + bold + italic (400/700 × normal/italic). */
+@import '@fontsource/carlito/400.css';
+@import '@fontsource/carlito/400-italic.css';
+@import '@fontsource/carlito/700.css';
+@import '@fontsource/carlito/700-italic.css';
+@import '@fontsource/gelasio/400.css';
+@import '@fontsource/gelasio/400-italic.css';
+@import '@fontsource/gelasio/700.css';
+@import '@fontsource/gelasio/700-italic.css';
+@import '@fontsource/arimo/400.css';
+@import '@fontsource/arimo/400-italic.css';
+@import '@fontsource/arimo/700.css';
+@import '@fontsource/arimo/700-italic.css';
+@import '@fontsource/tinos/400.css';
+@import '@fontsource/tinos/400-italic.css';
+@import '@fontsource/tinos/700.css';
+@import '@fontsource/tinos/700-italic.css';
+@import '@fontsource/cousine/400.css';
+@import '@fontsource/cousine/400-italic.css';
+@import '@fontsource/cousine/700.css';
+@import '@fontsource/cousine/700-italic.css';
+/* CJK (Noto Sans SC) for imported decks that request Microsoft YaHei / SimSun / 宋体 / 等线 / 思源黑体,
+   plus open display clones for Impact (Anton) and Arial Black (Archivo Black). Self-hosted, no CDN.
+   Noto Sans SC ships per-glyph unicode-range subsets, so the browser only fetches the glyphs used. */
+@import '@fontsource/noto-sans-sc/400.css';
+@import '@fontsource/noto-sans-sc/700.css';
+@import '@fontsource/anton/400.css';
+@import '@fontsource/archivo-black/400.css';
+
+/* All font families above are self-hosted through @fontsource, so the app makes no external font
+   requests at runtime. */
+
+/* Material Icons utility. ui-kit's .material-icons rule only sets color/size, it does NOT set
+   the font-family or the ligature feature, so icon names ("title", "delete") render as raw text.
+   This makes the ligatures resolve to glyphs. */
+.material-icons,
+.material-icons-outlined {
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.material-icons {
+  font-family: 'Material Icons';
+}
+.material-icons-outlined {
+  font-family: 'Material Icons Outlined';
+}
+
+/* RGAA 12.7 / WCAG 2.4.1, keyboard skip link: hidden until focused, then jumps to main content. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 2000;
+  padding: 8px 14px;
+  background: var(--accent, #1d4ed8);
+  color: #fff;
+  border-radius: 0 0 6px 0;
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* RGAA 13.8 / WCAG 2.3.3, honour the OS "reduce motion" setting: neutralise UI transitions and
+   slide build/transition animations for users sensitive to motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

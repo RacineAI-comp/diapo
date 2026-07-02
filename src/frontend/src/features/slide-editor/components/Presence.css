@@ -1,0 +1,29 @@
+.presence-stack {
+  display: inline-flex;
+  align-items: center;
+  padding-left: 8px;
+}
+.presence-stack .avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 0 0 0 2px var(--panel, #fff);
+  margin-left: -8px;
+  user-select: none;
+}
+.presence-stack .avatar:first-child {
+  margin-left: 0;
+}
+.presence-stack .avatar.is-you {
+  box-shadow: 0 0 0 2px var(--panel, #fff), 0 0 0 3px var(--accent, #1167d4);
+}
+.presence-stack .avatar--more {
+  background: var(--c--globals--colors--gray-100, #e1e2e5);
+  color: var(--c--contextuals--content--semantic--neutral--secondary, #64748b);
+}

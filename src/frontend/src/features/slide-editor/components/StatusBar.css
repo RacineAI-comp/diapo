@@ -1,0 +1,67 @@
+.statusbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  padding: 0 12px;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--muted);
+  z-index: var(--z-statusbar);
+}
+.sb-left,
+.sb-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sb-item {
+  font-variant-numeric: tabular-nums;
+}
+.sb-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--line);
+}
+.sb-toggle,
+.sb-zoom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 22px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.sb-toggle:hover,
+.sb-zoom-btn:hover {
+  background: rgba(15, 23, 42, 0.07);
+  color: var(--ink);
+}
+.sb-toggle.is-on {
+  color: var(--accent);
+}
+.sb-toggle .material-icons,
+.sb-zoom-btn .material-icons {
+  font-size: 17px;
+}
+.sb-zoom {
+  min-width: 56px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  border-radius: var(--radius-sm);
+}
+.sb-zoom:hover {
+  background: rgba(15, 23, 42, 0.07);
+}

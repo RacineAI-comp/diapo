@@ -1,0 +1,29 @@
+.notes-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+}
+.notes-bar__icon {
+  color: var(--c--contextuals--content--semantic--neutral--secondary, #64748b);
+  font-size: 18px;
+  margin-top: 4px;
+}
+.notes-bar__input {
+  flex: 1;
+  resize: vertical;
+  min-height: 36px;
+  max-height: 160px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--c--contextuals--background--surface--primary, #fff);
+}
+.notes-bar__input:focus {
+  outline: none;
+  border-color: var(--accent);
+}

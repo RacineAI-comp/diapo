@@ -1,0 +1,78 @@
+.find-panel {
+  position: fixed;
+  top: 96px;
+  right: 24px;
+  z-index: var(--z-modal);
+  width: 380px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--elev-3);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.find-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.find-row > .material-icons {
+  font-size: 18px;
+  color: var(--muted);
+}
+.find-row input {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 13px;
+}
+.find-count {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 36px;
+  text-align: right;
+}
+.find-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  color: var(--ink);
+}
+.find-btn:hover:not(:disabled) {
+  background: rgba(15, 23, 42, 0.07);
+}
+.find-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.find-replace-btn {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.find-replace-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+.find-replace-btn:disabled {
+  opacity: 0.5;
+}

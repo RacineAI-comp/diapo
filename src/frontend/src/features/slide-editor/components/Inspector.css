@@ -1,0 +1,382 @@
+.inspector {
+  width: 264px;
+  flex: 0 0 264px;
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.inspector-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 6px 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+.inspector-tab {
+  appearance: none;
+  border: none;
+  background: transparent;
+  /* Share the row width equally and shrink instead of clipping the last tab. */
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: center;
+  padding: 7px 4px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.inspector-tab:hover {
+  color: var(--ink);
+}
+.inspector-tab.is-active {
+  color: var(--accent);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.inspector-objtype {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px 4px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink);
+}
+.inspector-objtype .material-icons {
+  font-size: 18px;
+  color: var(--accent);
+}
+
+.inspector-scroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.ins-body {
+  display: flex;
+  flex-direction: column;
+}
+.ins-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.ins-title {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.ins-hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.ins-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+}
+.ins-label {
+  width: 64px;
+  flex: 0 0 64px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.ins-control {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+.ins-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+}
+.ins-grid2 .ins-label {
+  width: 14px;
+  flex: 0 0 14px;
+}
+
+.ins-text,
+.ins-number input,
+select.ins-text {
+  width: 100%;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+.ins-number {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+}
+.ins-number input {
+  width: 100%;
+}
+.ins-number i {
+  position: absolute;
+  right: 8px;
+  font-style: normal;
+  font-size: 11px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.ins-slider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.ins-slider input[type='range'] {
+  flex: 1;
+  min-width: 0;
+}
+.ins-slider-val {
+  width: 46px;
+  text-align: right;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.ins-seg {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.ins-seg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 30px;
+  padding: 0 8px;
+  border: none;
+  border-right: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+.ins-seg-btn:last-child {
+  border-right: none;
+}
+.ins-seg-btn:hover {
+  background: rgba(15, 23, 42, 0.05);
+}
+.ins-seg-btn.is-active {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+.ins-seg-btn .material-icons {
+  font-size: 18px;
+}
+
+.ins-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  padding: 2px 0;
+  cursor: pointer;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+.ins-check .material-icons {
+  font-size: 19px;
+  color: var(--muted);
+}
+.ins-check.is-on .material-icons {
+  color: var(--accent);
+}
+
+.ins-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+}
+.ins-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+.ins-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.ins-btn .material-icons {
+  font-size: 18px;
+}
+.ins-btnrow {
+  display: flex;
+  gap: 6px;
+}
+.ins-btnrow .ins-btn {
+  flex: 1;
+  padding: 0;
+}
+
+/* Theme + layout chips */
+.ins-themes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.ins-theme {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+}
+.ins-theme.is-active {
+  outline: 2px solid var(--accent);
+}
+.ins-theme-sw {
+  display: flex;
+  gap: 3px;
+}
+.ins-theme-sw i {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+.ins-theme-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+  mix-blend-mode: difference;
+  filter: invert(1) grayscale(1) contrast(2);
+}
+.ins-layouts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.ins-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--ink);
+}
+.ins-layout:hover {
+  border-color: var(--accent);
+}
+.ins-layout.is-active {
+  outline: 2px solid var(--accent);
+}
+.ins-layout .material-icons {
+  font-size: 22px;
+  color: var(--muted);
+}
+
+/* Chart data editor */
+.chart-data table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.chart-data th,
+.chart-data td {
+  padding: 1px;
+}
+.chart-data input {
+  width: 100%;
+  min-width: 0;
+  height: 26px;
+  padding: 0 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  font: inherit;
+  font-size: 12px;
+}
+.chart-data td input[type='number'] {
+  text-align: right;
+}
+.chart-data-del button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--muted);
+  display: inline-flex;
+}
+.chart-data-del .material-icons {
+  font-size: 16px;
+}
+.chart-data-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.chart-data-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  padding: 4px 8px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.chart-data-actions .material-icons {
+  font-size: 15px;
+}
+
+/* Vertical stack for grouped section content (rows, buttons) so children keep the same
+   rhythm as direct section children; ins-ro (read-only dimming) composes with it. */
+.ins-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}

@@ -1,0 +1,170 @@
+/* Co-located styles for the rich-text TextBox. Scoped tight enough to override the
+   legacy .textbox / .obj.text rules in styles.css without editing that file. */
+
+/* The TextBox owns the full object box. position:relative anchors the floating toolbar. */
+.obj.text .textbox {
+  position: relative;
+  /* Flex column inheriting the object's justify-content so the box-level vertical alignment
+     (o.valign → justifyContent on .obj.text) actually reaches the text; with the old
+     display:block + height:100% children, `middle`/`bottom` had no effect. */
+  display: flex;
+  flex-direction: column;
+  justify-content: inherit;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: visible; /* let the format toolbar escape the box bounds */
+  /* The legacy .textbox rule pins 22px, which would break the inheritance chain between the
+     object box (per-object font-size) and .textbox-content (font-size: inherit). */
+  font-size: inherit;
+}
+
+.textbox-editor {
+  width: 100%;
+  height: auto; /* content-sized, so justify-content can position it vertically */
+}
+
+/* The actual ProseMirror editable surface. */
+.textbox-content {
+  width: 100%;
+  /* min-height (not fixed height) + overflow visible: text that's taller than the box (e.g. an
+     imported title sized for a different font) overflows downward and stays VISIBLE rather than
+     being clipped. Horizontal still wraps (width:100% + word-break). */
+  min-height: 100%;
+  /* Padding from imported .pptx insets (per-side CSS vars set on .obj.text); falls back to the
+     editor default (8px/12px) when the box carries no imported padding. */
+  padding: var(--pad-top, 8px) var(--pad-right, 12px) var(--pad-bottom, 8px) var(--pad-left, 12px);
+  /* Inherit the box's font-size/family (set per-object on .obj.text) so the size stepper and
+     layout placeholders control text size; default to 22px when the box sets none. */
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  /* Inherit the box's text colour (set per-object in SlideObjectView); per-run marks override.
+     Must NOT be var(--ink), that flips in dark mode and would override the slide's own colour. */
+  color: inherit;
+  outline: none;
+  overflow: visible;
+  cursor: text;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.textbox-content:focus {
+  outline: none;
+}
+
+/* Imported bodyPr wrap="none": text must NOT auto-wrap, each paragraph stays on one line and
+   overflows the box (PowerPoint behaviour). Without this, every line break differs from the source. */
+.obj.text.is-nowrap {
+  overflow: visible;
+}
+.obj.text.is-nowrap .textbox-content,
+.obj.text.is-nowrap .textbox-content p,
+.obj.text.is-nowrap .textbox-content h1,
+.obj.text.is-nowrap .textbox-content h2,
+.obj.text.is-nowrap .textbox-content h3,
+.obj.text.is-nowrap .textbox-content li {
+  white-space: pre;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+/* Tame default block margins so a single paragraph sits where the old scalar text did. Imported
+   .pptx paragraph spacing (spcBef/spcAft) rides on the --space-before/--space-after vars (set on the
+   box); editor boxes set neither, so margins stay 0. Applies to every block (p/h/li) uniformly. */
+.textbox-content p,
+.textbox-content h1,
+.textbox-content h2,
+.textbox-content h3,
+.textbox-content li {
+  margin-top: var(--space-before, 0);
+  margin-bottom: var(--space-after, 0);
+}
+/* A list item carries the spacing; its inner paragraph must not double it. */
+.textbox-content li > p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+/* PowerPoint doesn't add the leading paragraph's space-before above the first line, strip it so
+   the text block top-aligns with the box inset, matching the source. (space-after on the last line
+   IS kept: PowerPoint counts it in the paragraph, and spAutoFit boxes size to include it.) */
+.textbox-content > :first-child {
+  margin-top: 0;
+}
+.textbox-content h1 {
+  font-size: 1.6em;
+  font-weight: 700;
+}
+.textbox-content h2 {
+  font-size: 1.3em;
+  font-weight: 700;
+}
+
+/* ProseMirror placeholder-ish empty state: keep the caret visible on empty docs. */
+.textbox-content p.is-empty::before {
+  color: var(--muted, #64748b);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Floating format toolbar, shown only when the editor is focused. */
+.textbox-toolbar {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  z-index: var(--z-floating, 60);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  /* Solid panel + ring + strong elevation so it never reads as white-on-white over a light slide. */
+  background: var(--panel, #fff);
+  border: 1px solid var(--line, #e2e8f0);
+  box-shadow: var(--elev-3), 0 0 0 1px rgba(2, 6, 23, 0.04);
+  border-radius: var(--radius-md, 8px);
+  user-select: none;
+  cursor: default;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* Toolbar controls are cunningham <Button> components (styled by the design system). */
+.textbox-toolbar .sep {
+  width: 1px;
+  align-self: stretch;
+  margin: 2px 2px;
+  background: var(--line, #e2e8f0);
+}
+
+/* Color picker: a swatch over a hidden-but-clickable native color input. */
+.textbox-toolbar .color {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.textbox-toolbar .color:hover {
+  background: #f1f5f9;
+}
+.textbox-toolbar .color .swatch {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--line, #e2e8f0);
+  border-radius: 4px;
+}
+.textbox-toolbar .color input[type='color'] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+}
